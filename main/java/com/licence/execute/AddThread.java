@@ -1,15 +1,15 @@
 package com.licence.execute;
 
-import com.licence.lockfree.selfOrganizing.SelfOrganizingList;
+import lockfree.selfOrganizing.SelfOrgList;
 
 public class AddThread extends Thread {
 
 	
-	private SelfOrganizingList sol;
+	private SelfOrgList sol;
 	private int addable;
 	
 	
-	public AddThread(SelfOrganizingList sol, int value){
+	public AddThread(SelfOrgList sol, int value){
 		this.sol=sol;
 		addable=value;
 	}

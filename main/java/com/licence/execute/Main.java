@@ -4,19 +4,20 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import com.licence.lockfree.selfOrganizing.SelfOrganizingList;
+
+import lockfree.selfOrganizing.SelfOrgList;
 
 public class Main {
 
 	
 	public final static int MAX_THREADS=5;
 	
-	private volatile SelfOrganizingList sol;
+	private volatile SelfOrgList sol;
 	
 	public static void main(String args[]) throws InterruptedException{
 		
 		Main main = new Main();
-		main.sol=new SelfOrganizingList();
+		main.sol=new SelfOrgList();
 		
 		long start= System.nanoTime();
 		ExecutorService exec = Executors.newCachedThreadPool();
