@@ -30,23 +30,18 @@ public class StructLockTest {
 	@AfterTest
 	protected void tearDown() throws Exception {
 		end = System.nanoTime();
-		
+		sol.list();
 		double seconds = (end - start) / 1000000000.0;
 		System.out.println("Time: " + seconds + "s Size: " + sol.size());
-		sol.list();
+
 	}
 
-	@Test(threadPoolSize = 5, invocationCount = 1000, timeOut = 10000)
+	@Test(threadPoolSize = 5, invocationCount = 100, timeOut = 10000)
 	public void test2() {
 
 		sol.add(10);
-		 sol.add(5);
-		 sol.add(6);
-		 sol.add(7);
-		//sol.remove(10);
-		// sol.search(7);.
-		 sol.search(5);
-		 sol.search(7);
+		sol.remove(10);
+		// sol.search(7);
 
 	}
 

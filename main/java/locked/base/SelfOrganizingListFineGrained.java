@@ -1,6 +1,7 @@
 package locked.base;
 
 import common.interfaces.SelfOrganizingListInterface;
+
 public class SelfOrganizingListFineGrained implements SelfOrganizingListInterface<LockedNode> {
 
 	public LockedNode head;
@@ -36,16 +37,19 @@ public class SelfOrganizingListFineGrained implements SelfOrganizingListInterfac
 		LockedNode curr = prev.next;
 
 		while (true) {
-			maskLock(prev,curr);
+			prev.lock();
+			curr.lock();
 			if (curr.value == value) {
 
 				prev.next = curr.next;
 
-				maskUnLock(prev,curr);
+				curr.unlock();
+				prev.unlock();
 				return true;
 			}
 
-			maskUnLock(prev, curr);
+			curr.unlock();
+			prev.unlock();
 
 			if (curr.next == null)
 				return false;
@@ -56,52 +60,38 @@ public class SelfOrganizingListFineGrained implements SelfOrganizingListInterfac
 		}
 
 	}
-	
-	
-	public void maskLock(LockedNode a, LockedNode b){
-		if(a.trylock())
-				b.lock();
-	}
-	
-	public void maskUnLock(LockedNode a, LockedNode b){
-		a.unlock();
-		b.unlock();
-	}
-
 
 	public LockedNode search(int value) {
 
 		LockedNode node = head;
 		LockedNode nextNode = node.next;
-		nextNode.trylock();
-		if (nextNode.value == value){
-			nextNode.unlock();
+		if (nextNode.value == value)
 			return nextNode;
-		}
-		nextNode.unlock();
-		
-		while (true) {
-			maskLock(node,nextNode);
 
-			if (nextNode.value == value && node.value!= -1) {
+		while (true) {
+			node.lock();
+			nextNode.lock();
+
+			if (nextNode.value == value) {
 				int aux = nextNode.value;
 				nextNode.value = node.value;
 				node.value = aux;
 
-				maskUnLock(node,nextNode);
-
+				nextNode.unlock();
+				node.unlock();
 				return node;
 			}
 
-			maskUnLock(node,nextNode);
+			nextNode.unlock();
+			node.unlock();
+
 			if (nextNode.next == null)
 				return null;
 
 			node = nextNode;
 			nextNode = nextNode.next;
 		}
-		
-		
+
 	}
 
 	public boolean contains(int value) {
@@ -110,26 +100,12 @@ public class SelfOrganizingListFineGrained implements SelfOrganizingListInterfac
 	}
 
 	public boolean list() {
-		LockedNode node = head.next;
-		System.out.println("The List: ");
-		System.out.print("[ ");
-		int k = 1, row = 0;
-		System.out.print(row + ": ");
-		do {
-			if (k == 10) {
-				System.out.println(node.value);
-				row++;
-				k = 1;
-				System.out.print(row + "0: ");
-			} else {
-				k++;
-				System.out.print(node.value + " ");
-			}
-
-			node = node.next;
-		} while (node != null);
-		System.out.println(" ]");
-		return false;
+		System.out.print("List: [ ");
+		for (LockedNode node = this.head.next; node != null; node = node.next) {
+			System.out.print(node.value + " ");
+		}
+		System.out.println("]");
+		return true;
 	}
 
 	public int size() {

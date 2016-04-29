@@ -58,26 +58,12 @@ public class SelfOrganizingListWSynch implements SelfOrganizingListInterface<Nod
 	}
 
 	public boolean list() {
-		Node node = head.next;
-		System.out.println("The List: ");
-		System.out.print("[ ");
-		int k = 1, row = 0;
-		System.out.print(row + ": ");
-		do {
-			if (k == 10) {
-				System.out.println(node.value);
-				row++;
-				k = 1;
-				System.out.print(row + "0: ");
-			} else {
-				k++;
-				System.out.print(node.value + " ");
-			}
-
-			node = node.next;
-		} while (node != null);
-		System.out.println(" ]");
-		return false;
+		System.out.print("List: [ ");
+		for (Node node = this.head.next; node != null; node = node.next) {
+			System.out.print(node.value + " ");
+		}
+		System.out.println("]");
+		return true;
 
 	}
 

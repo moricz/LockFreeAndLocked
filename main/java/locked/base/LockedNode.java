@@ -1,5 +1,6 @@
 package locked.base;
 
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import common.interfaces.NodeInterface;
@@ -8,7 +9,7 @@ public class LockedNode implements NodeInterface<LockedNode> {
 
 	public int value;
 	public LockedNode next;
-	private ReentrantLock lock;
+	private Lock lock;
 
 	public LockedNode(int value, LockedNode node) {
 		this.value = value;
@@ -25,8 +26,7 @@ public class LockedNode implements NodeInterface<LockedNode> {
 	}
 
 	public void unlock() {
-		if(lock.isHeldByCurrentThread())
-			lock.unlock();
+		lock.unlock();
 	}
 
 	public int getValue() {

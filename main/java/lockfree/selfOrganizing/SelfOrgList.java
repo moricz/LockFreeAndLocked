@@ -71,7 +71,7 @@ public class SelfOrgList implements SelfOrganizingListInterface<Node> {
 			AtomicStampedReference<Node> second = first.getReference().next;
 			AtomicStampedReference<Node> third = second.getReference().next;
 
-			while (true) {
+			back: while (true) {
 
 				Node oldFirst = first.getReference();
 				Node oldSecond = second.getReference();
@@ -79,8 +79,11 @@ public class SelfOrgList implements SelfOrganizingListInterface<Node> {
 				// if the removable node is the second element
 				if (second.getReference().getValue() == value) {
 					// if the mask is not stamped by others
-					if (first.getStamp() != NONE && second.getStamp() != NONE && third.getStamp() != NONE)
+					if (first.getStamp() != NONE)
 						continue again;
+
+					if (second.getStamp() != NONE && third.getStamp() != NONE)
+						continue back;
 
 					// try stamp to begin removal
 					if (first.attemptStamp(oldFirst, STOPREMOVE) && second.attemptStamp(oldSecond, REMOVE)
@@ -114,10 +117,11 @@ public class SelfOrgList implements SelfOrganizingListInterface<Node> {
 		again: while (true) {
 			AtomicStampedReference<Node> before = head;
 			AtomicStampedReference<Node> swapA = before.getReference().next;
-			AtomicStampedReference<Node> swapB = swapA.getReference().next;
 
 			if (swapA.getReference().value == value)
 				return swapA.getReference();
+
+			AtomicStampedReference<Node> swapB = swapA.getReference().next;
 
 			back: while (true) {
 
@@ -127,9 +131,12 @@ public class SelfOrgList implements SelfOrganizingListInterface<Node> {
 				// verify if it is the node with the searched value
 				if (swapB.getReference().value == value) {
 
-					// check if the mask is stamped anywhere
-					if (before.getStamp() != NONE && swapA.getStamp() != NONE && swapB.getStamp() != NONE)
+					if (before.getStamp() != NONE)
 						continue again;
+
+					// check if the mask is stamped anywhere
+					if (swapA.getStamp() != NONE && swapB.getStamp() != NONE)
+						continue back;
 
 					// stamp the mask
 					if (before.attemptStamp(oldPredecessor, SEARCH) && swapA.attemptStamp(oldReplacable, STOPSEARCH)
@@ -150,7 +157,6 @@ public class SelfOrgList implements SelfOrganizingListInterface<Node> {
 
 				// if end of the list and it was not found
 				if (swapB.getReference().next() == null) {
-					System.out.println("Not Found");
 					return null;
 				}
 				before = swapA;
